@@ -6,11 +6,11 @@
 **Plan for tomorrow:** Build the frontend spend input form and local persistence, then connect it to `/api/audit` and render first pass audit results UI.  
 
 ## Day 2 — 2026-05-08
-**Hours worked:** 0  
-**What I did:** Planned next implementation steps only.  
-**What I learned:** N/A.  
-**Blockers / what I'm stuck on:** N/A.  
-**Plan for tomorrow:** Fill after Day 2 work is complete.  
+**Hours worked:** 5  
+**What I did:** Implemented the full frontend spend input form for required tool categories, with tool-plan selectors, spend and seats fields, team size and primary use case controls. Added localStorage persistence for form state across reloads. Integrated form submission with backend `POST /api/audit` and built an initial results UI showing total monthly/annual savings and per-tool recommendations. Fixed frontend TypeScript/JSX issues and verified client lint/build + backend tests pass.  
+**What I learned:** Building strict shared enums for tools/plans early reduces integration bugs between frontend and backend. Also, small validation and compile checks catch many UX-level mistakes before runtime.  
+**Blockers / what I'm stuck on:** Form UI is functional but still basic; needs stronger visual polish and responsive refinement to be screenshot-ready.  
+**Plan for tomorrow:** Improve results-page presentation quality, add lead capture flow after results, and begin shareable public result URL implementation.  
 
 ## Day 3 — 2026-05-09
 **Hours worked:** 0  
