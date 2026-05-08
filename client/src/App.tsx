@@ -48,10 +48,18 @@ interface ToolRecommendation {
 }
 
 interface AuditResult {
+  teamSize?: number;
+  primaryUseCase?: string;
   totalCurrentMonthlySpendUsd: number;
   totalPotentialMonthlySavingsUsd: number;
   totalPotentialAnnualSavingsUsd: number;
   recommendations: ToolRecommendation[];
+}
+interface LeadForm {
+  email: string;
+  companyName: string;
+  role: string;
+  teamSize?: number;
 }
 
 const STORAGE_KEY = "aispendaudit.form.v1";
@@ -108,6 +116,14 @@ export function App() {
   const [result, setResult] = useState<AuditResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [leadStatus, setLeadStatus] = useState<string>("");
+  const [shareUrl, setShareUrl] = useState<string>("");
+  const [leadForm, setLeadForm] = useState<LeadForm>({
+    email: "",
+    companyName: "",
+    role: "",
+    teamSize: DEFAULT_FORM.teamSize,
+  });
 
   useEffect(() => {
     try {
@@ -168,10 +184,49 @@ export function App() {
 
       const data = (await response.json()) as AuditResult;
       setResult(data);
+      setLeadStatus("");
+      setShareUrl("");
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Unexpected error");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleLeadSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!result) return;
+    setLeadStatus("Saving...");
+    try {
+      const leadResponse = await fetch(`${API_BASE_URL}/api/leads`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...leadForm,
+          honeypot: "",
+          auditInput: form,
+        }),
+      });
+      if (!leadResponse.ok) {
+        throw new Error("Lead save failed");
+      }
+
+      const shareResponse = await fetch(`${API_BASE_URL}/api/share`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          auditInput: form,
+          auditResult: result,
+        }),
+      });
+      if (!shareResponse.ok) {
+        throw new Error("Share link generation failed");
+      }
+      const shareData = (await shareResponse.json()) as { shareId: string; publicUrl: string };
+      setShareUrl(`${window.location.origin}/r/${shareData.shareId}`);
+      setLeadStatus("Saved. Confirmation email sent if email provider is configured.");
+    } catch (saveError) {
+      setLeadStatus(saveError instanceof Error ? saveError.message : "Failed to save report.");
     }
   }
 
@@ -339,6 +394,45 @@ export function App() {
               </li>
             ))}
           </ul>
+
+          <h3>Save Report</h3>
+          <form onSubmit={handleLeadSubmit} style={{ display: "grid", gap: 8, maxWidth: 560 }}>
+            <label>
+              Email
+              <input
+                type="email"
+                required
+                value={leadForm.email}
+                onChange={(e) => setLeadForm((prev) => ({ ...prev, email: e.target.value }))}
+                style={{ display: "block", width: "100%", marginTop: 4 }}
+              />
+            </label>
+            <label>
+              Company name (optional)
+              <input
+                type="text"
+                value={leadForm.companyName}
+                onChange={(e) => setLeadForm((prev) => ({ ...prev, companyName: e.target.value }))}
+                style={{ display: "block", width: "100%", marginTop: 4 }}
+              />
+            </label>
+            <label>
+              Role (optional)
+              <input
+                type="text"
+                value={leadForm.role}
+                onChange={(e) => setLeadForm((prev) => ({ ...prev, role: e.target.value }))}
+                style={{ display: "block", width: "100%", marginTop: 4 }}
+              />
+            </label>
+            <button type="submit">Save Report & Create Share Link</button>
+          </form>
+          {leadStatus && <p>{leadStatus}</p>}
+          {shareUrl && (
+            <p>
+              Public share URL: <a href={shareUrl}>{shareUrl}</a>
+            </p>
+          )}
         </section>
       )}
     </main>
