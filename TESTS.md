@@ -20,6 +20,11 @@ Covers no-change behavior when engine cannot defensibly recommend savings.
 6. `aggregates monthly and annual savings across tools`  
 Covers roll-up math for total monthly and annual savings.
 
+## `server/tests/summaryService.test.ts`
+
+1. `returns fallback summary when API key is not configured`  
+Covers graceful summary fallback behavior when Anthropic credentials are missing.
+
 ## How to Run
 
 ```bash

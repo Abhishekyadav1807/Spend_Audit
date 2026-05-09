@@ -2,29 +2,38 @@
 
 ## Purpose
 
-LLM is only used for personalized summary text on top of deterministic audit output.
+The LLM is used only for a personalized narrative summary after deterministic audit math is complete.  
+All savings calculations and recommendations come from rule-based logic in the backend.
 
-## Prompt (Draft V1)
+## Production Prompt (Anthropic)
 
 ```text
-You are an AI spend analyst. Write a concise 90-120 word summary for a startup team.
-Use the audit JSON provided. Mention:
-1) current monthly spend,
-2) potential monthly and annual savings,
-3) top 2 recommended actions,
-4) a realistic confidence statement.
-Do not invent pricing numbers. If savings are low, say spend is already efficient.
-Tone: practical, non-hype, founder-friendly.
+You are a finance-aware AI spend analyst.
+Write a single paragraph between 90 and 120 words.
+Be specific with numbers and recommendations from the JSON.
+Do not invent tool names, prices, or actions.
+If monthly savings are below 100 USD, be honest that spend is mostly optimized.
+Audit JSON:
+{...runtime payload...}
 ```
 
 ## Why This Prompt
 
-- Keeps summary concise and decision-ready.
-- Prevents fabricated numbers by explicitly restricting invention.
-- Handles both high-savings and low-savings cases honestly.
+- Word-bound summary keeps the output concise and scannable.
+- Hard anti-hallucination instruction prevents fabricated pricing/action claims.
+- Low-savings honesty clause avoids fake “optimizations” for already efficient stacks.
+- JSON grounding makes the summary directly traceable to audit output.
 
-## What Did Not Work (To Update)
+## Fallback Strategy
 
-- Overly generic prompts that produced marketing-style fluff.
-- Prompts without hard constraints that occasionally hallucinated tool details.
+If Anthropic key is missing, request fails, or response is malformed:
 
+- Return deterministic template summary from backend.
+- Include actual monthly/annual savings and top 2 recommendations.
+- Explicitly state fallback usage in API response (`usedFallback: true`).
+
+## What Did Not Work
+
+- Loose prompts like “summarize this audit” produced fluffy marketing text.
+- Prompts without length constraints often returned multi-paragraph output.
+- Prompts without explicit “do not invent numbers” sometimes introduced made-up details.

@@ -55,6 +55,11 @@ interface AuditResult {
   totalPotentialAnnualSavingsUsd: number;
   recommendations: ToolRecommendation[];
 }
+interface SummaryResponse {
+  text: string;
+  model: string;
+  usedFallback: boolean;
+}
 interface LeadForm {
   email: string;
   companyName: string;
@@ -118,6 +123,7 @@ export function App() {
   const [error, setError] = useState<string | null>(null);
   const [leadStatus, setLeadStatus] = useState<string>("");
   const [shareUrl, setShareUrl] = useState<string>("");
+  const [summary, setSummary] = useState<SummaryResponse | null>(null);
   const [leadForm, setLeadForm] = useState<LeadForm>({
     email: "",
     companyName: "",
@@ -184,6 +190,20 @@ export function App() {
 
       const data = (await response.json()) as AuditResult;
       setResult(data);
+      const summaryResponse = await fetch(`${API_BASE_URL}/api/summary`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          auditInput: form,
+          auditResult: data,
+        }),
+      });
+      if (summaryResponse.ok) {
+        const summaryData = (await summaryResponse.json()) as SummaryResponse;
+        setSummary(summaryData);
+      } else {
+        setSummary(null);
+      }
       setLeadStatus("");
       setShareUrl("");
     } catch (submitError) {
@@ -394,6 +414,17 @@ export function App() {
               </li>
             ))}
           </ul>
+
+          {summary && (
+            <>
+              <h3>Personalized Summary</h3>
+              <p>{summary.text}</p>
+              <p style={{ color: "#666", fontSize: "0.9rem" }}>
+                Generated via {summary.model}
+                {summary.usedFallback ? " (fallback template used)" : ""}.
+              </p>
+            </>
+          )}
 
           <h3>Save Report</h3>
           <form onSubmit={handleLeadSubmit} style={{ display: "grid", gap: 8, maxWidth: 560 }}>

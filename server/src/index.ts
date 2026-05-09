@@ -8,6 +8,8 @@ import { ensureTables, hasDatabase, pool } from "./db.js";
 import { leadCaptureSchema } from "./lead/schema.js";
 import { sendConfirmationEmail } from "./services/email.js";
 import { shareRequestSchema } from "./share/schema.js";
+import { summaryRequestSchema } from "./summary/schema.js";
+import { generatePersonalizedSummary } from "./services/summary.js";
 
 const app = express();
 const port = Number(process.env.PORT || 8080);
@@ -115,6 +117,18 @@ app.post("/api/share", async (req, res) => {
   }
 
   return res.json({ shareId: id, publicUrl: `/r/${id}` });
+});
+
+app.post("/api/summary", async (req, res) => {
+  const parsed = summaryRequestSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({
+      error: "Invalid summary payload",
+      details: parsed.error.flatten(),
+    });
+  }
+  const summary = await generatePersonalizedSummary(parsed.data);
+  return res.json(summary);
 });
 
 app.get("/api/share/:id", async (req, res) => {
