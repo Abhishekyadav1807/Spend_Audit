@@ -38,6 +38,10 @@ flowchart TD
 - PostgreSQL for structured audit/lead records and share-link retrieval.
 - Deterministic rule engine for finance-readable recommendations.
 
+## Abuse Protection Choice
+
+AISpendAudit uses a honeypot field on lead capture plus a simple in-memory per-IP rate limit on API routes. I chose this before hCaptcha because the product is meant to show value before adding friction, and the first abuse risk is automated lead/report spam rather than high-risk account takeover. At larger scale, I would move the rate limit to Redis or the hosting provider edge layer so limits work across multiple server instances.
+
 ## If This Needed 10k Audits/Day
 
 - Add Redis cache for static pricing and common recommendation paths.
@@ -45,4 +49,3 @@ flowchart TD
 - Split audit engine into pure service module with benchmark load tests.
 - Add DB indexes on share ID and created-at fields; use read replicas.
 - Add rate limiting at API gateway and per-IP abuse controls.
-

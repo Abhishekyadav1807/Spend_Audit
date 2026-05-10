@@ -49,9 +49,14 @@ AISpendAudit delivers a 3-minute audit that identifies AI overspend and shows co
 ```bash
 # Install dependencies
 npm install
+npm install --prefix client
+npm install --prefix server
 
-# Run in development
-npm run dev
+# Run backend API
+npm run dev:server
+
+# Run frontend app in a second terminal
+npm run dev:client
 
 # Run lint
 npm run lint
@@ -67,6 +72,7 @@ npm test
 3. Split frontend and backend so API keys, rate limiting, and email workflows stay server-side.
 4. Keep MVP scope tight (core tools + clear savings math) before adding advanced benchmark or referral features.
 5. Use PostgreSQL for structured audit records and share-link retrieval instead of local-only/session-only state.
+6. Use a honeypot plus simple IP rate limit for abuse protection because it avoids adding friction before the user sees audit value.
 
 ## Known Limitations (Current)
 

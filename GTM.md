@@ -1,13 +1,12 @@
-# GTM Plan (Draft)
+# GTM Plan
 
-This file will contain a 300-700 word, channel-specific launch plan for AISpendAudit targeting early-stage technical decision-makers.
+The first target user is a technical budget owner at a seed to Series A SaaS startup: usually a CTO, founding engineer, or engineering manager at a 5-30 person company. They are not running a formal procurement process, but they are already paying for Cursor, ChatGPT, Claude, Copilot, and at least one API provider. The trigger is usually not "AI cost optimization" as a formal project. It is a Slack thread about tool sprawl, a surprise OpenAI/Anthropic invoice, a founder asking why five people have separate subscriptions, or a finance check before extending runway.
 
-## Sections to Complete
+Right before they want AISpendAudit, they are searching or scrolling around topics like "Cursor business vs pro", "ChatGPT Team worth it", "Claude Team pricing", "OpenAI API invoice too high", and "startup software spend audit". The best channels are places where technical founders already compare tooling in public: Hacker News launch/show threads, r/SaaS, r/startups, r/indiehackers, r/ChatGPTCoding, r/cursor, YC Bookface-style founder groups if accessible, Indie Hackers, FounderPal/Buildspace-style Discords, and X lists of AI devtool founders. I would avoid generic SEO for week one because the product needs proof, screenshots, and specific before/after examples first.
 
-1. Exact target user by role and company stage
-2. Trigger moments and search/social intent before usage
-3. Specific online communities and outreach surfaces
-4. Zero-budget first-100-user execution plan
-5. Unfair distribution channel hypothesis
-6. Week-1 traction targets with concrete numbers
+The first 100 users with $0 paid budget would come from direct and useful distribution, not broad posting. Day 1 launch: publish a short teardown thread: "I audited a fake 12-person startup AI stack and found $1,340/mo in savings." Include 3 screenshots and invite founders to reply with their stack. Day 2: DM 40 founders/CTOs with a specific note: "Saw your team is hiring engineers and using AI devtools. I built a 3-minute AI spend audit; happy to run yours privately." Day 3: post a transparent build log on Hacker News Show HN and Indie Hackers. Day 4-7: turn completed audits into anonymized mini case studies: "7-person devtools startup saved $420/mo by downgrading 3 seats and moving direct API spend to credits."
+
+Credex's unfair channel is supply-side credibility. Most cost tools can say "save money", but Credex can say, "we see real unused AI infrastructure credits and know where retail pricing is avoidable." That makes the audit feel less like a calculator and more like a second opinion from someone close to the market.
+
+Week-1 traction goal: 250 unique visitors, 80 audit starts, 45 completed audits, 18 emails captured, 5 high-savings consultation clicks, and 3 qualified calls. If completion is below 25%, the form is too heavy. If completion is fine but email capture is below 20%, the report is not valuable enough or the save/share CTA is weak.
 

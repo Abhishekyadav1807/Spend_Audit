@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import "./App.css";
 
 type ToolId =
   | "cursor"
@@ -114,6 +115,16 @@ const DEFAULT_FORM: AuditInput = {
 
 function formatUsd(amount: number): string {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount);
+}
+
+function actionLabel(action: ToolRecommendation["recommendedAction"]): string {
+  const labels: Record<ToolRecommendation["recommendedAction"], string> = {
+    downgrade_plan: "Downgrade plan",
+    switch_tool: "Switch tool",
+    keep_current: "Keep current",
+    use_credits: "Use credits",
+  };
+  return labels[action];
 }
 
 export function App() {
@@ -250,34 +261,48 @@ export function App() {
     }
   }
 
+  const highSavings = (result?.totalPotentialMonthlySavingsUsd || 0) > 500;
+  const lowSavings = result !== null && result.totalPotentialMonthlySavingsUsd < 100;
+
   return (
-    <main style={{ maxWidth: 1000, margin: "0 auto", padding: "2rem", fontFamily: "Arial, sans-serif" }}>
-      <h1 style={{ marginBottom: "0.5rem" }}>AISpendAudit</h1>
-      <p style={{ marginTop: 0, color: "#444" }}>
-        Enter your current AI stack to get a defensible spend optimization report.
-      </p>
+    <main className="app-shell">
+      <section className="intro">
+        <div>
+          <p className="eyebrow">AI spend audit</p>
+          <h1>AISpendAudit</h1>
+          <p className="intro-copy">
+            Enter the AI tools your team pays for and get an immediate, source-backed savings report.
+          </p>
+        </div>
+        <div className="intro-stats" aria-label="Audit flow summary">
+          <span>3 min audit</span>
+          <span>No login</span>
+          <span>Email after value</span>
+        </div>
+      </section>
 
-      <form onSubmit={handleSubmit} style={{ border: "1px solid #ddd", borderRadius: 8, padding: "1rem" }}>
-        <h2 style={{ marginTop: 0 }}>Spend Input</h2>
+      <form onSubmit={handleSubmit} className="audit-panel">
+        <div className="section-heading">
+          <p className="eyebrow">Step 1</p>
+          <h2>Current AI Stack</h2>
+        </div>
 
-        <section style={{ display: "grid", gap: 12, gridTemplateColumns: "1fr 1fr", marginBottom: 16 }}>
-          <label>
-            Team size
+        <section className="two-col">
+          <label className="field">
+            <span>Team size</span>
             <input
               type="number"
               min={1}
               value={form.teamSize}
               onChange={(e) => setForm((prev) => ({ ...prev, teamSize: Number(e.target.value) || 1 }))}
-              style={{ display: "block", width: "100%", marginTop: 4 }}
             />
           </label>
 
-          <label>
-            Primary use case
+          <label className="field">
+            <span>Primary use case</span>
             <select
               value={form.primaryUseCase}
               onChange={(e) => setForm((prev) => ({ ...prev, primaryUseCase: e.target.value as UseCase }))}
-              style={{ display: "block", width: "100%", marginTop: 4 }}
             >
               <option value="coding">Coding</option>
               <option value="writing">Writing</option>
@@ -288,23 +313,19 @@ export function App() {
           </label>
         </section>
 
-        <h3>Tools</h3>
+        <div className="tool-header">
+          <h3>Tools</h3>
+          <button type="button" onClick={addTool} className="secondary-button">
+            + Add tool
+          </button>
+        </div>
         {form.tools.map((tool, index) => (
           <div
             key={`${tool.toolId}-${index}`}
-            style={{
-              border: "1px solid #eee",
-              borderRadius: 6,
-              padding: "0.75rem",
-              marginBottom: "0.75rem",
-              display: "grid",
-              gap: 8,
-              gridTemplateColumns: "2fr 2fr 1fr 1fr auto",
-              alignItems: "end",
-            }}
+            className="tool-row"
           >
-            <label>
-              Tool
+            <label className="field">
+              <span>Tool</span>
               <select
                 value={tool.toolId}
                 onChange={(e) => {
@@ -314,7 +335,6 @@ export function App() {
                     planId: PLANS_BY_TOOL[nextTool][0],
                   });
                 }}
-                style={{ display: "block", width: "100%", marginTop: 4 }}
               >
                 {TOOL_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -324,12 +344,11 @@ export function App() {
               </select>
             </label>
 
-            <label>
-              Plan
+            <label className="field">
+              <span>Plan</span>
               <select
                 value={tool.planId}
                 onChange={(e) => updateTool(index, { planId: e.target.value as PlanId })}
-                style={{ display: "block", width: "100%", marginTop: 4 }}
               >
                 {PLANS_BY_TOOL[tool.toolId].map((plan) => (
                   <option key={plan} value={plan}>
@@ -339,8 +358,8 @@ export function App() {
               </select>
             </label>
 
-            <label>
-              Spend/mo ($)
+            <label className="field">
+              <span>Spend/mo ($)</span>
               <input
                 type="number"
                 min={0}
@@ -349,18 +368,16 @@ export function App() {
                 onChange={(e) =>
                   updateTool(index, { monthlySpendUsd: Number(e.target.value) >= 0 ? Number(e.target.value) : 0 })
                 }
-                style={{ display: "block", width: "100%", marginTop: 4 }}
               />
             </label>
 
-            <label>
-              Seats
+            <label className="field">
+              <span>Seats</span>
               <input
                 type="number"
                 min={1}
                 value={tool.seats}
                 onChange={(e) => updateTool(index, { seats: Math.max(1, Number(e.target.value) || 1) })}
-                style={{ display: "block", width: "100%", marginTop: 4 }}
               />
             </label>
 
@@ -368,99 +385,131 @@ export function App() {
               type="button"
               onClick={() => removeTool(index)}
               disabled={form.tools.length === 1}
-              style={{ height: 32 }}
+              className="ghost-button"
             >
               Remove
             </button>
           </div>
         ))}
 
-        <div style={{ display: "flex", gap: 8 }}>
-          <button type="button" onClick={addTool}>
-            + Add Tool
-          </button>
-          <button type="submit" disabled={!canSubmit || loading}>
+        <div className="form-actions">
+          <button type="submit" disabled={!canSubmit || loading} className="primary-button">
             {loading ? "Running audit..." : "Run Audit"}
           </button>
         </div>
       </form>
 
       {error && (
-        <p style={{ color: "#b00020", marginTop: "1rem" }}>
+        <p className="error-message">
           {error}
         </p>
       )}
 
       {result && (
-        <section style={{ marginTop: "1.5rem", border: "1px solid #ddd", borderRadius: 8, padding: "1rem" }}>
-          <h2 style={{ marginTop: 0 }}>Audit Results</h2>
-          <p>
-            Current monthly spend: <strong>{formatUsd(result.totalCurrentMonthlySpendUsd)}</strong>
-          </p>
-          <p>
-            Potential monthly savings: <strong>{formatUsd(result.totalPotentialMonthlySavingsUsd)}</strong>
-          </p>
-          <p>
-            Potential annual savings: <strong>{formatUsd(result.totalPotentialAnnualSavingsUsd)}</strong>
-          </p>
+        <section className="results-panel">
+          <div className="results-hero">
+            <div>
+              <p className="eyebrow">Audit result</p>
+              <h2>{lowSavings ? "Your spend looks disciplined" : "Savings opportunity found"}</h2>
+              <p className="result-note">
+                {highSavings
+                  ? "This audit crosses the threshold where Credex should be part of the savings conversation."
+                  : lowSavings
+                    ? "No forced savings here. The current stack looks mostly aligned with team size and use case."
+                    : "These recommendations focus on plan fit, seat count, and discounted credit opportunities."}
+              </p>
+            </div>
+            <div className="savings-card">
+              <span>Potential savings</span>
+              <strong>{formatUsd(result.totalPotentialMonthlySavingsUsd)}</strong>
+              <small>{formatUsd(result.totalPotentialAnnualSavingsUsd)} per year</small>
+            </div>
+          </div>
 
-          <h3>Per-tool recommendations</h3>
-          <ul>
+          <div className="metric-grid">
+            <div>
+              <span>Current monthly spend</span>
+              <strong>{formatUsd(result.totalCurrentMonthlySpendUsd)}</strong>
+            </div>
+            <div>
+              <span>Team size</span>
+              <strong>{form.teamSize}</strong>
+            </div>
+            <div>
+              <span>Use case</span>
+              <strong>{form.primaryUseCase}</strong>
+            </div>
+          </div>
+
+          <div className="recommendations">
+            <h3>Per-tool recommendations</h3>
             {result.recommendations.map((rec, index) => (
-              <li key={`${rec.toolId}-${index}`} style={{ marginBottom: 8 }}>
-                <strong>{TOOL_OPTIONS.find((x) => x.value === rec.toolId)?.label}:</strong>{" "}
-                {formatUsd(rec.currentMonthlySpendUsd)} {"->"} {rec.recommendedAction} ({rec.recommendedPlanOrTool}),
-                savings {formatUsd(rec.estimatedMonthlySavingsUsd)}. {rec.reason}
-              </li>
+              <article key={`${rec.toolId}-${index}`} className="recommendation-row">
+                <div>
+                  <strong>{TOOL_OPTIONS.find((x) => x.value === rec.toolId)?.label}</strong>
+                  <span>{actionLabel(rec.recommendedAction)}: {rec.recommendedPlanOrTool}</span>
+                </div>
+                <div>
+                  <span>{formatUsd(rec.currentMonthlySpendUsd)} current</span>
+                  <strong>{formatUsd(rec.estimatedMonthlySavingsUsd)} saved/mo</strong>
+                </div>
+                <p>{rec.reason}</p>
+              </article>
             ))}
-          </ul>
+          </div>
 
           {summary && (
-            <>
+            <div className="summary-block">
               <h3>Personalized Summary</h3>
               <p>{summary.text}</p>
-              <p style={{ color: "#666", fontSize: "0.9rem" }}>
+              <p className="summary-meta">
                 Generated via {summary.model}
                 {summary.usedFallback ? " (fallback template used)" : ""}.
               </p>
-            </>
+            </div>
           )}
 
-          <h3>Save Report</h3>
-          <form onSubmit={handleLeadSubmit} style={{ display: "grid", gap: 8, maxWidth: 560 }}>
-            <label>
-              Email
+          <div className="capture-panel">
+            <div>
+              <h3>{highSavings ? "Talk to Credex about credits" : "Save this report"}</h3>
+              <p>
+                {highSavings
+                  ? "Your savings estimate is high enough to justify a deeper credit review."
+                  : "Get the report link and a confirmation email after seeing the value."}
+              </p>
+            </div>
+            <form onSubmit={handleLeadSubmit} className="lead-form">
+              <label className="field">
+                <span>Email</span>
               <input
                 type="email"
                 required
                 value={leadForm.email}
                 onChange={(e) => setLeadForm((prev) => ({ ...prev, email: e.target.value }))}
-                style={{ display: "block", width: "100%", marginTop: 4 }}
               />
             </label>
-            <label>
-              Company name (optional)
+              <label className="field">
+                <span>Company name (optional)</span>
               <input
                 type="text"
                 value={leadForm.companyName}
                 onChange={(e) => setLeadForm((prev) => ({ ...prev, companyName: e.target.value }))}
-                style={{ display: "block", width: "100%", marginTop: 4 }}
               />
             </label>
-            <label>
-              Role (optional)
+              <label className="field">
+                <span>Role (optional)</span>
               <input
                 type="text"
                 value={leadForm.role}
                 onChange={(e) => setLeadForm((prev) => ({ ...prev, role: e.target.value }))}
-                style={{ display: "block", width: "100%", marginTop: 4 }}
               />
             </label>
-            <button type="submit">Save Report & Create Share Link</button>
-          </form>
-          {leadStatus && <p>{leadStatus}</p>}
+              <button type="submit" className="primary-button">Save Report & Create Share Link</button>
+            </form>
+          </div>
+          {leadStatus && <p className="status-message">{leadStatus}</p>}
           {shareUrl && (
-            <p>
+            <p className="share-link">
               Public share URL: <a href={shareUrl}>{shareUrl}</a>
             </p>
           )}
