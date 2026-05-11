@@ -44,6 +44,30 @@ AISpendAudit delivers a 3-minute audit that identifies AI overspend and shows co
 
 - Add live URL before submission
 
+## Deployment
+
+Recommended deployment split:
+
+- Frontend: Vercel or Netlify from `client`
+- Backend API: Render from `server`
+- Database: Supabase Postgres or Render Postgres
+
+Required backend environment variables:
+
+- `DATABASE_URL`
+- `APP_BASE_URL`
+- `PUBLIC_REPORT_BASE_URL`
+- `ANTHROPIC_API_KEY`
+- `RESEND_API_KEY`
+- `RESEND_FROM_EMAIL`
+
+Required frontend environment variable:
+
+- `VITE_API_BASE_URL`
+- `VITE_CONSULTATION_URL`
+
+Before submission, verify the live URL, share URL, email capture, and Lighthouse mobile targets.
+
 ## Quick Start
 
 ```bash

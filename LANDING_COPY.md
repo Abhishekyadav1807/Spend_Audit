@@ -1,4 +1,4 @@
-# Landing Copy (Draft)
+# Landing Copy
 
 ## Hero Headline (<=10 words)
 
@@ -6,30 +6,35 @@ Audit your AI spend in 3 minutes.
 
 ## Subheadline (<=25 words)
 
-See where your team is overspending on AI subscriptions and APIs, then get concrete monthly and annual savings recommendations.
+Find plan mismatches, retail pricing waste, and credit savings across your AI tool stack.
 
-## Primary CTA
+## Primary CTA Copy
 
-Start Free Audit
+Run Free Audit
 
 ## Social Proof Block
 
-Mocked for now: "Used by 120+ startup teams to reduce AI tool waste."
+Mocked for launch draft: "Built from 40+ AI pricing checks across coding tools, chat products, and direct API spend."
 
-## FAQ (5)
+## FAQ
 
-### 1) Do I need to sign up first?
-No. You can run the audit first and only share email if you want the saved report.
+### 1. Do I need to create an account?
 
-### 2) Is this only for engineers?
-No. It is built for technical and non-technical operators who own software budgets.
+No. The audit works without login. Email is only requested after the report is shown, so users see value first.
 
-### 3) How accurate are the savings numbers?
-Recommendations are rule-based and tied to documented pricing sources.
+### 2. What tools does AISpendAudit support?
 
-### 4) Will my company details be public on shared links?
-No. Public links exclude personally identifying details.
+The MVP supports Cursor, GitHub Copilot, Claude, ChatGPT, Anthropic API direct, OpenAI API direct, Gemini, and Windsurf.
 
-### 5) What if my stack is already optimized?
-The report says so directly and still gives monitoring suggestions.
+### 3. Is the audit math AI-generated?
+
+No. The savings math is deterministic and based on documented plan prices, seat count, usage fit, and credit-discount assumptions. AI is only used to summarize the finished audit.
+
+### 4. What happens if my stack is already efficient?
+
+The product says so directly. Low-savings audits show a "spending well" path and offer a notify/save option rather than inventing fake recommendations.
+
+### 5. Are shared reports private?
+
+Shared report URLs remove email and company details. They show tool choices, spend levels, recommendations, and savings numbers only.
 

@@ -17,6 +17,14 @@ const requestWindowMs = 60_000;
 const maxRequestsPerWindow = 30;
 const ipRateMap = new Map<string, { count: number; windowStart: number }>();
 
+function getPublicReportBaseUrl(req: express.Request): string {
+  return (
+    process.env.PUBLIC_REPORT_BASE_URL ||
+    process.env.APP_BASE_URL ||
+    `${req.protocol}://${req.get("host")}`
+  ).replace(/\/$/, "");
+}
+
 app.use(cors());
 app.use(express.json());
 
@@ -116,7 +124,7 @@ app.post("/api/share", async (req, res) => {
     await pool.query("INSERT INTO shared_reports (id, payload) VALUES ($1, $2)", [id, payload]);
   }
 
-  return res.json({ shareId: id, publicUrl: `/r/${id}` });
+  return res.json({ shareId: id, publicUrl: `${getPublicReportBaseUrl(req)}/r/${id}` });
 });
 
 app.post("/api/summary", async (req, res) => {
@@ -164,8 +172,7 @@ app.get("/r/:id", async (req, res) => {
   const description = `Potential savings: $${payload.auditResult.totalPotentialMonthlySavingsUsd.toFixed(
     2
   )}/mo, $${payload.auditResult.totalPotentialAnnualSavingsUsd.toFixed(2)}/yr`;
-  const appUrl = process.env.APP_BASE_URL || "http://localhost:5173";
-  const publicUrl = `${appUrl}/r/${id}`;
+  const publicUrl = `${getPublicReportBaseUrl(req)}/r/${id}`;
   res.setHeader("Content-Type", "text/html");
   return res.send(`<!doctype html>
 <html lang="en">

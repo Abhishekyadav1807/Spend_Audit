@@ -70,6 +70,7 @@ interface LeadForm {
 
 const STORAGE_KEY = "aispendaudit.form.v1";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+const CONSULTATION_URL = import.meta.env.VITE_CONSULTATION_URL || "https://credex.rocks";
 
 const TOOL_OPTIONS: Array<{ value: ToolId; label: string }> = [
   { value: "cursor", label: "Cursor" },
@@ -254,7 +255,7 @@ export function App() {
         throw new Error("Share link generation failed");
       }
       const shareData = (await shareResponse.json()) as { shareId: string; publicUrl: string };
-      setShareUrl(`${window.location.origin}/r/${shareData.shareId}`);
+      setShareUrl(shareData.publicUrl);
       setLeadStatus("Saved. Confirmation email sent if email provider is configured.");
     } catch (saveError) {
       setLeadStatus(saveError instanceof Error ? saveError.message : "Failed to save report.");
@@ -505,6 +506,11 @@ export function App() {
               />
             </label>
               <button type="submit" className="primary-button">Save Report & Create Share Link</button>
+              {highSavings && (
+                <a className="consult-link" href={CONSULTATION_URL} target="_blank" rel="noreferrer">
+                  Book Credex Consultation
+                </a>
+              )}
             </form>
           </div>
           {leadStatus && <p className="status-message">{leadStatus}</p>}
