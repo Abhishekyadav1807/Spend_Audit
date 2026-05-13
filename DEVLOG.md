@@ -41,11 +41,11 @@
 **Plan for tomorrow:** Use deployed URLs and real interview notes to replace remaining placeholders, run Lighthouse on the live app, update `README.md`, make final commit, and submit.  
 
 ## Day 7 — 2026-05-13
-**Hours worked:** 0  
-**What I did:** Placeholder entry; work not done yet.  
-**What I learned:** N/A.  
-**Blockers / what I'm stuck on:** N/A.  
-**Plan for tomorrow:** Submission and final QA checklist.  
+**Hours worked:** 4  
+**What I did:** Deployed the backend to Render, connected Supabase Postgres through `DATABASE_URL`, deployed the frontend to Vercel, and updated Render's `APP_BASE_URL` to the live frontend URL. Fixed two production deployment issues that did not appear in the local build: Render skipped dev type packages during production install, and the TypeScript output path did not match the server start command on a clean build. Updated `README.md` with the live frontend and backend URLs.  
+**What I learned:** Deployment exposed different problems than local development. The most useful lesson was that build settings are part of the product: `NODE_ENV`, root directory, output directory, and public URL environment variables can break an otherwise working app.  
+**Blockers / what I'm stuck on:** Final screenshots or a Loom walkthrough still need to be added to `README.md`. I also need to run one final live audit, confirm share links strip private fields, and run Lighthouse on the deployed frontend. If Resend or Anthropic keys are not configured in production, those integrations will use fallback behavior instead of the full intended flow.  
+**Plan for tomorrow:** Submit after final live QA, screenshots/Loom, Lighthouse check, and confirming the latest GitHub commit is green.  
 
 
 

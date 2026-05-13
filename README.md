@@ -37,12 +37,16 @@ AISpendAudit delivers a 3-minute audit that identifies AI overspend and shows co
 
 ## Screenshots / Demo
 
-- Add at least 3 screenshots before submission
-- Or add a 30-second Loom/YouTube walkthrough
+- Final screenshots to include before submission:
+- Landing/input form with a sample AI tool stack
+- Audit results page showing total monthly and annual savings
+- Public share report URL with private fields removed
+- Optional backup: 30-second Loom walkthrough of input -> audit -> lead capture -> share link
 
 ## Deployed URL
 
-- Add live URL before submission
+- Frontend: https://spend-audit-theta.vercel.app/
+- Backend health check: https://aispendaudit-api.onrender.com/health
 
 ## Deployment
 
