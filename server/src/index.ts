@@ -25,6 +25,15 @@ function getPublicReportBaseUrl(req: express.Request): string {
   ).replace(/\/$/, "");
 }
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 app.use(cors());
 app.use(express.json());
 
@@ -166,13 +175,37 @@ app.get("/r/:id", async (req, res) => {
     return res.status(404).send("Report not found");
   }
   const payload = result.rows[0].payload as {
-    auditResult: { totalPotentialMonthlySavingsUsd: number; totalPotentialAnnualSavingsUsd: number };
+    auditResult: {
+      totalCurrentMonthlySpendUsd: number;
+      totalPotentialMonthlySavingsUsd: number;
+      totalPotentialAnnualSavingsUsd: number;
+      recommendations: Array<{
+        toolId: string;
+        currentMonthlySpendUsd: number;
+        recommendedAction: string;
+        recommendedPlanOrTool: string;
+        estimatedMonthlySavingsUsd: number;
+        reason: string;
+      }>;
+    };
   };
   const title = "AISpendAudit Report";
   const description = `Potential savings: $${payload.auditResult.totalPotentialMonthlySavingsUsd.toFixed(
     2
   )}/mo, $${payload.auditResult.totalPotentialAnnualSavingsUsd.toFixed(2)}/yr`;
   const publicUrl = `${getPublicReportBaseUrl(req)}/r/${id}`;
+  const recommendationRows = payload.auditResult.recommendations
+    .map(
+      (rec) => `<li>
+        <strong>${escapeHtml(rec.toolId)}</strong>
+        <span>$${rec.currentMonthlySpendUsd.toFixed(2)} current -> ${escapeHtml(
+          rec.recommendedAction
+        )} (${escapeHtml(rec.recommendedPlanOrTool)})</span>
+        <em>$${rec.estimatedMonthlySavingsUsd.toFixed(2)}/mo savings</em>
+        <p>${escapeHtml(rec.reason)}</p>
+      </li>`
+    )
+    .join("");
   res.setHeader("Content-Type", "text/html");
   return res.send(`<!doctype html>
 <html lang="en">
@@ -187,11 +220,31 @@ app.get("/r/:id", async (req, res) => {
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="${title}" />
     <meta name="twitter:description" content="${description}" />
+    <style>
+      body { margin: 0; font-family: Arial, sans-serif; background: #f6f7f1; color: #172019; }
+      main { max-width: 920px; margin: 0 auto; padding: 40px 20px; }
+      .hero { border-bottom: 1px solid #d8ddcf; padding-bottom: 24px; margin-bottom: 24px; }
+      h1 { font-size: clamp(2rem, 7vw, 4rem); margin: 0 0 12px; }
+      .savings { font-size: clamp(2rem, 6vw, 3.5rem); font-weight: 800; margin: 12px 0 0; }
+      ul { list-style: none; padding: 0; display: grid; gap: 12px; }
+      li { background: #fffdf6; border: 1px solid #d8ddcf; border-radius: 8px; padding: 16px; }
+      li strong, li span, li em { display: block; }
+      li p { margin-bottom: 0; color: #5b655d; }
+      a { color: #163f31; font-weight: 800; }
+    </style>
   </head>
   <body>
-    <h1>${title}</h1>
-    <p>${description}</p>
-    <p>Open the app to see full details.</p>
+    <main>
+      <section class="hero">
+        <h1>${title}</h1>
+        <p>${description}</p>
+        <p class="savings">$${payload.auditResult.totalPotentialMonthlySavingsUsd.toFixed(2)}/mo</p>
+        <p>$${payload.auditResult.totalCurrentMonthlySpendUsd.toFixed(2)} current monthly spend</p>
+      </section>
+      <h2>Public recommendations</h2>
+      <ul>${recommendationRows}</ul>
+      <p><a href="${escapeHtml(process.env.APP_BASE_URL || publicUrl)}">Run your own audit</a></p>
+    </main>
   </body>
 </html>`);
 });

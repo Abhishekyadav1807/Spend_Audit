@@ -1,22 +1,22 @@
 # Reflection
 
-## 1) Hardest Bug This Week
+## 1. The hardest bug I hit this week, and how I debugged it
 
-To be completed with real debugging notes after implementation.
+The hardest bug was not a single algorithm error; it was the deployment-shaped share URL issue. Locally, it was easy to assume that `window.location.origin + /r/:id` would produce a useful public report link. That worked only if the frontend and backend lived on the same origin, which is not true for the deployment plan. My first hypothesis was that share links only needed a generated UUID and the frontend could construct the URL. After thinking through Vercel/Netlify frontend plus Render backend, I realized Open Graph previews would hit the backend route, not the frontend SPA. I changed the backend to own the public report URL and added `PUBLIC_REPORT_BASE_URL` so production can point to the correct host. I also updated the frontend to trust the returned `publicUrl` instead of rebuilding it. The fix worked because it matched the actual deployment boundary rather than the local development shortcut.
 
-## 2) A Decision I Reversed Mid-Week
+## 2. A decision I reversed mid-week, and what made me reverse it
 
-To be completed after at least one architecture or UX reversal happens.
+I reversed the decision to treat the public result page as a thin placeholder. Early on, I added `/r/:id` mainly to satisfy the Open Graph requirement, and it only showed headline savings. That was not enough for the assignment because the public version is supposed to be the viral loop: tools and savings numbers should be visible while email/company data stays stripped out. The reversal happened when I re-read the requirement and compared it with the implementation. I changed the server-rendered public page to include sanitized per-tool recommendations, current spend, monthly savings, and reasons. I also added HTML escaping because public report content should never be blindly interpolated. The better version is still simple, but it now behaves like a real shared report instead of a metadata stub.
 
-## 3) What I Would Build in Week 2
+## 3. What I would build in week 2 if I had it
 
-To be completed after MVP stabilizes.
+In week 2, I would build benchmarking and a sharper Credex handoff. The strongest product question is not only "can this team save money?" but "is this spend unusual for a team like theirs?" I would add a benchmark mode that computes AI spend per developer and compares it against company-stage buckets. I would also improve the audit engine with more nuanced usage patterns: coding-heavy teams, API-heavy teams, writing/research teams, and mixed stacks should not get the same alternative suggestions. On the business side, I would add a consultation workflow for high-savings audits: calendar link, estimated credit volume, and a short internal lead score. Finally, I would add admin analytics for completed audits, lead source, savings bucket, and conversion status so Credex can learn which channels produce qualified buyers rather than just traffic.
 
-## 4) How I Used AI Tools
+## 4. How I used AI tools
 
-To be completed honestly with concrete examples of where AI helped and where it failed.
+I used AI assistance for scaffolding ideas, checking edge cases, drafting parts of documentation, and speeding up repetitive TypeScript work. I did not trust AI with the audit math as final truth. Pricing constants and recommendation rules needed to be deterministic and source-backed, because a finance-literate reviewer should be able to inspect the reasoning. One concrete mistake I caught was around share URLs: the initial implementation leaned toward creating public links from the frontend origin, which would break when backend and frontend are deployed separately. I corrected that by moving public URL ownership to the backend and documenting `PUBLIC_REPORT_BASE_URL`. I also avoided fabricating user interviews even though it would make the file look "complete"; that requirement has to come from real conversations, and fake interview notes would be both unethical and easy to spot.
 
-## 5) Self-Rating
+## 5. Self-rating
 
-To be completed on submission day with one-sentence reasoning per category.
+Discipline: 8/10. I kept progress spread across multiple days, maintained a devlog, and reached the five-distinct-days git requirement, but I should have scheduled user interviews earlier. Code quality: 7/10. The backend has typed schemas, tests, and clear separation between audit logic, summary, lead capture, and storage; the frontend is still mostly in one large component and should be split after submission. Design sense: 7/10. The Day 4 UI became much more credible and responsive, but it still needs live Lighthouse feedback and screenshot-level polish. Problem-solving: 8/10. I found and corrected integration risks around public URLs, fallback summaries, and deployment boundaries. Entrepreneurial thinking: 7/10. GTM, economics, and metrics are specific and numbers-driven, but the final score depends heavily on completing real user interviews and using their contradictions to improve the product.
 

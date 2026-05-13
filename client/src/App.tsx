@@ -66,6 +66,7 @@ interface LeadForm {
   companyName: string;
   role: string;
   teamSize?: number;
+  honeypot: string;
 }
 
 const STORAGE_KEY = "aispendaudit.form.v1";
@@ -141,6 +142,7 @@ export function App() {
     companyName: "",
     role: "",
     teamSize: DEFAULT_FORM.teamSize,
+    honeypot: "",
   });
 
   useEffect(() => {
@@ -235,7 +237,6 @@ export function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...leadForm,
-          honeypot: "",
           auditInput: form,
         }),
       });
@@ -505,6 +506,27 @@ export function App() {
                 onChange={(e) => setLeadForm((prev) => ({ ...prev, role: e.target.value }))}
               />
             </label>
+              <label className="field">
+                <span>Team size (optional)</span>
+                <input
+                  type="number"
+                  min={1}
+                  value={leadForm.teamSize || form.teamSize}
+                  onChange={(e) =>
+                    setLeadForm((prev) => ({ ...prev, teamSize: Math.max(1, Number(e.target.value) || form.teamSize) }))
+                  }
+                />
+              </label>
+              <label className="hidden-field" aria-hidden="true">
+                Company website
+                <input
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={leadForm.honeypot}
+                  onChange={(e) => setLeadForm((prev) => ({ ...prev, honeypot: e.target.value }))}
+                />
+              </label>
               <button type="submit" className="primary-button">Save Report & Create Share Link</button>
               {highSavings && (
                 <a className="consult-link" href={CONSULTATION_URL} target="_blank" rel="noreferrer">

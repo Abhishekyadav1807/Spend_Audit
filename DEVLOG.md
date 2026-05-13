@@ -34,11 +34,11 @@
 **Plan for tomorrow:** Deploy backend, database, and frontend; run a live end-to-end audit; add screenshots/demo and deployed URLs to `README.md`; finish `REFLECTION.md`; run Lighthouse and final QA.  
 
 ## Day 6 — 2026-05-12
-**Hours worked:** 0  
-**What I did:** Placeholder entry; work not done yet.  
-**What I learned:** N/A.  
-**Blockers / what I'm stuck on:** N/A.  
-**Plan for tomorrow:** Fill after Day 6 work is complete.  
+**Hours worked:** 6  
+**What I did:** Completed final repo-side submission prep before deployment. Improved public share pages so `/r/:id` shows sanitized tool recommendations, current spend, savings, and reasons instead of only a headline number. Added HTML escaping for public report rendering. Added the optional team-size field and a real hidden honeypot input to the lead capture form. Completed `REFLECTION.md` with concrete debugging notes, reversed decisions, week-2 plan, AI usage, and self-ratings. Added Render and Vercel deployment config files to reduce setup risk.  
+**What I learned:** The public shared report is not just a metadata endpoint; it is part of the product loop. If it does not show enough useful context, people have no reason to share it. I also learned that final submission work is mostly about removing ambiguity: deployment config, env vars, screenshots, and honest docs matter as much as code.  
+**Blockers / what I'm stuck on:** Live deployment, screenshots, Lighthouse, and the three real user interviews still require external actions outside the repo. The code and docs are prepared for those, but they cannot be honestly faked in the repository.  
+**Plan for tomorrow:** Use deployed URLs and real interview notes to replace remaining placeholders, run Lighthouse on the live app, update `README.md`, make final commit, and submit.  
 
 ## Day 7 — 2026-05-13
 **Hours worked:** 0  
