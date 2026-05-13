@@ -37,11 +37,17 @@ AISpendAudit delivers a 3-minute audit that identifies AI overspend and shows co
 
 ## Screenshots / Demo
 
-- Final screenshots to include before submission:
-- Landing/input form with a sample AI tool stack
-- Audit results page showing total monthly and annual savings
-- Public share report URL with private fields removed
-- Optional backup: 30-second Loom walkthrough of input -> audit -> lead capture -> share link
+### Landing and Input Form
+
+![AISpendAudit landing and input form](docs/screenshots/landing-input.png)
+
+### Audit Results
+
+![AISpendAudit audit results](docs/screenshots/results.png)
+
+### Public Share Report
+
+![AISpendAudit public share report](docs/screenshots/public-share.png)
 
 ## Deployed URL
 
